@@ -1,4 +1,4 @@
-from app import db
+from app.models import db
 from datetime import datetime
 
 class Assessment(db.Model):
@@ -7,7 +7,7 @@ class Assessment(db.Model):
     school_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    duration = db.Column(db.Integer, nullable=False) 
+    duration = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     questions = db.relationship('Question', backref='assessment', lazy=True)
     submissions = db.relationship('Submission', backref='assessment', lazy=True)
@@ -17,14 +17,14 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
-    question_type = db.Column(db.String(50), nullable=False)  
+    question_type = db.Column(db.String(50), nullable=False)
     max_score = db.Column(db.Integer, nullable=False)
 
 class Submission(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)
     assessment_id = db.Column(db.Integer, db.ForeignKey('assessments.id'), nullable=False)
-    student_id = db.Column(db.Integer, nullable=False)  
+    student_id = db.Column(db.Integer, nullable=False)
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
     answers = db.relationship('Answer', backref='submission', lazy=True)
     score = db.Column(db.Float, default=0.0)
@@ -37,3 +37,16 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     score = db.Column(db.Float, default=0.0)
+
+class Class(db.Model):
+    __tablename__ = 'classes'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    school_id = db.Column(db.String(36), db.ForeignKey('schools.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+
+class ResourcePermission(db.Model):
+    __tablename__ = 'resource_permissions'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    resource_id = db.Column(db.String(36), db.ForeignKey('resources.id'), nullable=False)
+    class_id = db.Column(db.String(36), db.ForeignKey('classes.id'), nullable=False)
+    __table_args__ = (db.Index('idx_resource_permission_resource_id', 'resource_id'),)

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from .. import db
-from ..models.user import User
-from ..models.school import School
-from ..utils.auth import role_required
+from app import db
+from app.models.user import User
+from app.models.school import School
+from app.utils.auth import role_required
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import jwt_required
 
@@ -84,3 +84,24 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted'}), 200
+
+@bp.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    user = User(
+        school_id="temp", email=data['email'], role='owner',
+        password_hash=generate_password_hash(data['password']),
+        first_name=data['first_name'], last_name=data['last_name']
+    )
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'id': user.id}), 201
+
+@bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
+    if user:
+        token = create_access_token(identity=user.id)
+        return jsonify({'token': token}), 200
+    return jsonify({'error': 'User not found'}), 404

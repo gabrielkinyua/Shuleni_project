@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from .. import db
-from ..models.school import School
-from ..utils.auth import role_required
+from app import db
+from app.models.school import School
+from app.utils.auth import role_required
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models.user import User
+from app.models.user import User
 
 bp = Blueprint('schools', __name__)
 
@@ -29,3 +29,15 @@ def create_school():
         'name': school.name,
         'created_at': school.created_at.isoformat()
     }), 201
+
+@bp.route('/schools/<school_id>/classes', methods=['POST'])
+@jwt_required()
+@role_required('owner')
+def create_class(school_id):
+    data = request.get_json()
+    if not data or not data.get('name'):
+        return jsonify({'error': 'Class name is required'}), 400
+    class_ = Class(school_id=school_id, name=data['name'])
+    db.session.add(class_)
+    db.session.commit()
+    return jsonify({'id': class_.id}), 201
