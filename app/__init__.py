@@ -23,7 +23,8 @@ def create_app():
         from .models.attendance import Attendance
         from .models.assessment import Assessment, Question, Submission, Answer, Class, ResourcePermission
         
-        from .routes import school_routes, user_routes, assessments
+        from .routes import school_routes, user_routes
+        from .routes.assessments import bp as assessments # from .routes import school_routes, user_routes, assessments
         app.register_blueprint(school_routes)
         app.register_blueprint(user_routes)
         app.register_blueprint(assessments)
