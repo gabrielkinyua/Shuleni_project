@@ -44,14 +44,15 @@ class Answer(db.Model):
 class Class(db.Model):
     __tablename__ = 'classes'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    school_id = db.Column(db.String(36), db.ForeignKey('schools.id'), nullable=False)
+    school_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('schools.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     school = db.relationship('School', backref='classes')
 
 class ResourcePermission(db.Model):
     __tablename__ = 'resource_permissions'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    resource_id = db.Column(db.String(36), db.ForeignKey('resources.id'), nullable=False)
-    class_id = db.Column(db.String(36), db.ForeignKey('classes.id'), nullable=False)
-    resource = db.relationship('Resource', backref='permissions')
+    resource_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('resources.id'), nullable=False)  
+    # class_id = db.Column(db.String(36), db.ForeignKey('classes.id'), nullable=False)
+    class_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('classes.id'), nullable=False)
+    resource = db.relationship('Resource', backref='resource_permissions')
     class_ = db.relationship('Class', backref='permissions')

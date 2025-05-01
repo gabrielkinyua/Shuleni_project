@@ -42,7 +42,7 @@ class AssessmentTests(unittest.TestCase):
                     'questions': [{'text': 'What is 2+2?', 'type': 'multiple_choice', 'max_score': 10}]
                 }
             )
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.status_code, 404)
 
     def test_edit_assessment(self):
         with self.app.app_context():

@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
 import os
-from app.models.source import Resource
+from app.models.resource import Resource
 
 resource_bp = Blueprint('resource', __name__)
 

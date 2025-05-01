@@ -19,15 +19,18 @@ def create_app():
         # Import models
         from .models.school import School
         from .models.user import User
-        from .models.source import Resource
+        from .models.resource import Resource  
         from .models.attendance import Attendance
         from .models.assessment import Assessment, Question, Submission, Answer, Class, ResourcePermission
         
+        # Import blueprints
         from .routes import school_routes, user_routes
-        from .routes.assessments import bp as assessments # from .routes import school_routes, user_routes, assessments
-        app.register_blueprint(school_routes)
-        app.register_blueprint(user_routes)
-        app.register_blueprint(assessments)
+        from .routes.assessments import bp as assessments
+        
+        # Register blueprints with URL prefixes
+        app.register_blueprint(school_routes, url_prefix='/api')
+        app.register_blueprint(user_routes, url_prefix='/api')
+        app.register_blueprint(assessments, url_prefix='/api/assessments')
         
         db.create_all()
     

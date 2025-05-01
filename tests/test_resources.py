@@ -6,7 +6,7 @@ import uuid
 from io import BytesIO
 from app.models.school import School
 from app.models.user import User
-from app.models.source import Resource
+from app.models.resource import Resource
 from app.models.assessment import Class, ResourcePermission
 
 class ResourceTests(unittest.TestCase):
