@@ -4,8 +4,9 @@ from app.models.school import School
 from app.utils.auth import role_required
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.user import User
+from app.models.assessment import Class
 
-bp = Blueprint('schools', __name__)
+bp = Blueprint('school', __name__, url_prefix='/api/schools')
 
 @bp.route('/schools', methods=['POST'])
 @jwt_required()

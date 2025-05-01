@@ -5,9 +5,11 @@ from app.utils.anti_plagiarism import check_plagiarism
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
 
-assessments_bp = Blueprint('assessments', __name__)
+bp = Blueprint('assessments', __name__, url_prefix='/api/assessments')
 
-@assessments_bp.route('/schools/<int:school_id>/assessments', methods=['POST'])
+
+
+@bp.route('/schools/<int:school_id>/assessments', methods=['POST'])
 @jwt_required()
 def create_assessment(school_id):
     data = request.get_json()
@@ -30,7 +32,7 @@ def create_assessment(school_id):
     db.session.commit()
     return jsonify({'id': assessment.id, 'title': assessment.title}), 201
 
-@assessments_bp.route('/assessments/<int:assessment_id>', methods=['PUT'])
+@bp.route('/assessments/<int:assessment_id>', methods=['PUT'])
 @jwt_required()
 def edit_assessment(assessment_id):
     data = request.get_json()
@@ -43,7 +45,7 @@ def edit_assessment(assessment_id):
     db.session.commit()
     return jsonify({'id': assessment.id, 'title': assessment.title})
 
-@assessments_bp.route('/assessments/<int:assessment_id>/start', methods=['POST'])
+@bp.route('/assessments/<int:assessment_id>/start', methods=['POST'])
 @jwt_required()
 def start_assessment(assessment_id):
     assessment = Assessment.query.get_or_404(assessment_id)
@@ -59,7 +61,7 @@ def start_assessment(assessment_id):
         'end_time': (datetime.utcnow() + timedelta(minutes=assessment.duration)).isoformat()
     })
 
-@assessments_bp.route('/assessments/<int:assessment_id>/submit', methods=['POST'])
+@bp.route('/assessments/<int:assessment_id>/submit', methods=['POST'])
 @jwt_required()
 def submit_assessment(assessment_id):
     data = request.get_json()
@@ -84,7 +86,7 @@ def submit_assessment(assessment_id):
     db.session.commit()
     return jsonify({'submission_id': submission.id, 'plagiarism_flag': submission.plagiarism_flag})
 
-@assessments_bp.route('/assessments/<int:assessment_id>/results', methods=['GET'])
+@bp.route('/assessments/<int:assessment_id>/results', methods=['GET'])
 @jwt_required()
 def view_results(assessment_id):
     submission = Submission.query.filter_by(assessment_id=assessment_id, student_id=get_jwt_identity()).first_or_404()

@@ -4,9 +4,9 @@ from app.models.user import User
 from app.models.school import School
 from app.utils.auth import role_required
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, create_access_token
 
-bp = Blueprint('users', __name__)
+bp = Blueprint('user', __name__, url_prefix='/api/users')
 
 @bp.route('/schools/<school_id>/users', methods=['POST'])
 @role_required('owner')
